@@ -22,12 +22,14 @@ namespace Scarlet.IO.ImageFormats
 		public uint Unknown0x0C { get; private set; }       // padding?
 
 		public uint Unknown0x10 { get; private set; }       // count of something? or always 0x02?
-		public uint NumMipmaps { get; private set; }
+        public uint Unknown0x14 { get; private set; } 
+        public uint NumMipmaps { get; private set; }
 		public uint BaseWidth { get; private set; }
 		public uint BaseHeight { get; private set; }
 
-		public uint MaybePixelOrderingMode { get; private set; }    // pixel ordering? 0x01 == swizzled, 0x06 == linear?
-		public uint PixelFormat { get; private set; }
+        public uint Unknown0x20 { get; private set; }
+
+        public uint PixelFormat { get; private set; }
 		public uint Unknown0x28 { get; private set; }       // count or always 0x01?
 		public uint Unknown0x2C { get; private set; }       // zero?
 
@@ -90,11 +92,11 @@ namespace Scarlet.IO.ImageFormats
 			Unknown0x0C = reader.ReadUInt32();
 
 			Unknown0x10 = reader.ReadUInt32();
-			NumMipmaps = reader.ReadUInt32();
+            Unknown0x14 = reader.ReadUInt32();
 			BaseWidth = reader.ReadUInt32();
 			BaseHeight = reader.ReadUInt32();
 
-			MaybePixelOrderingMode = reader.ReadUInt32();
+            Unknown0x20 = reader.ReadUInt32();
 			PixelFormat = reader.ReadUInt32();
 			Unknown0x28 = reader.ReadUInt32();
 			Unknown0x2C = reader.ReadUInt32();
@@ -145,9 +147,13 @@ namespace Scarlet.IO.ImageFormats
 			Unknown0xB0 = reader.ReadUInt32();
 			Unknown0xB4 = reader.ReadUInt32();
 
-			MipmapInfos = new Tuple<uint, uint>[NumMipmaps];
-			for (int i = 0; i < NumMipmaps; i++)
-				MipmapInfos[i] = new Tuple<uint, uint>(reader.ReadUInt32(), reader.ReadUInt32());
+            NumMipmaps = 1;
+            MipmapInfos = new Tuple<uint, uint>[1];
+            for (int i = 0; i < NumMipmaps; i++)
+            {
+                var offset = reader.ReadUInt32();
+                MipmapInfos[i] = new Tuple<uint, uint>(offset, 0);
+            }
 
 			switch (PixelFormat)
 			{
@@ -163,13 +169,8 @@ namespace Scarlet.IO.ImageFormats
 				default: throw new Exception($"MHW TEX format 0x{PixelFormat:X}");
 			}
 
-			switch (MaybePixelOrderingMode)
-			{
-				case 0x01: pixelDataFormat |= PixelDataFormat.PixelOrderingTiled3DS; break;
-				case 0x06: pixelDataFormat |= PixelDataFormat.PixelOrderingLinear; break;
+		    pixelDataFormat |= PixelDataFormat.PixelOrderingLinear; 
 
-				default: throw new Exception($"MHW TEX pixel order 0x{MaybePixelOrderingMode:X}");
-			}
 
 			mipmapData = new List<MipmapLevel>();
 			for (int i = 0; i < NumMipmaps; i++)
