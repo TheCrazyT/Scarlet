@@ -8,6 +8,7 @@ deploy:
   key:
     secure: NVd+7Kp3Nm+r7vapxhMDP2WEoPMyAm/2KjRS4ECCH7lTukfwcnWy1hvzRBsa57FGJAjeIgWMEbinhz6ZHMGXKNS3R7EgohV67xnn/9t7lKVtmTVH7zJhxlkVB2O+Ip+V4cB+cAdUd7ULN0iCTGiTl4a1GLslZxHxNKZUDR+nSs3CzI4e+/IONsB+UnnFU/V3+6Q1JSBi83704yp/+zf1xjKaQB9R0937XJb3sBMl1Ky9j3JAio7utespZ8PZLYXgq6uNF7kuaEIWexQCxTObmwBEaMDrRvKXH0akmNujpM9prBU/uQB49bYr1Wd3A5okF5NrbVtabCdf2vfC7uql7HXXmjOeUGJ1Jkj3eQe0OqXvGQzGGk1NMGjNVdi2xGa3TTTI56NIOHPYlX0FsIvUOlJRxJlkFUIM07pkXKQceZcdUPNuXz7bctdR2xrbxvG7CobQIGjn09j8Lxi8iT19OvY852dnskBUHtwrv+ie8v9156tncg7I7Rl7MQEtMG7KfTLKn7+KgUIo2qDavKymkDTSW43UTO1OOFQQzMMXlCu9j6bDQAjssHImU3OFLn7Lgso0WwSR2BsLVfx9hO+GRd3MWRiBJ6cTOSBRFsB2zUiLFqM3mQAEhpHuZQETdsJWCz8qwm8HBYkwk9FCzGU1Nl2fkVyXYNZVpUlZMqq9eag=
 install:
+- COMMIT=$(git log --format="%H" -n 1) && BRANCH_NAME=$(git branch | grep \* | cut -d ' ' -f2)  && find -name AssemblyInfo*.cs -exec sed -i s/\{branch\}/$BRANCH_NAME/ '{}' \; -exec sed -i s/\{chash:7\}/${COMMIT:0:7}/ {} \; -exec sed -i s/\{...dirty\}// '{}' \;
 - sudo apt-get install -y gtk-sharp2
 - sh -c "nuget restore Scarlet.sln" || true
 script:
