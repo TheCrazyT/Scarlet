@@ -1,0 +1,8 @@
+language: csharp
+solution: Scarlet.sln
+install:
+  - sudo apt-get install -y gtk-sharp2
+  - sh -c "nuget restore Scarlet.sln" || true
+script:
+  - xbuild /p:Configuration=Release Scarlet.sln || true
+  - ls /home/travis/build/TheCrazyT/Scarlet/ScarletTestApp/bin/Release/
