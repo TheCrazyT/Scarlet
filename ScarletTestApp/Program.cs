@@ -161,7 +161,14 @@ namespace ScarletTestApp
                 IndentWriteLine("Operation completed in {0}.", GetReadableTimespan(stopwatch.Elapsed));
                 IndentWriteLine();
                 IndentWriteLine("Press any key to exit.");
-                Console.ReadKey();
+                try
+                {
+                    Console.ReadKey();
+                }
+                catch (Exception ex)
+                {
+                    //ignore
+                }
             }
         }
 
